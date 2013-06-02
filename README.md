@@ -8,8 +8,8 @@ Input:
   Item ID (requeired)
   
 Output:
-  <Item ID>_results.txt
-  <Item ID>_full_results.xml
+  (Item ID)_results.txt
+  (Item ID)_full_results.xml
 
 
 *Requires ebay-sdk-python*
