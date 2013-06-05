@@ -20,27 +20,57 @@ class textbox_handler:
         self.text.insert('end',line)
 
 class mywidgets:
+
+	def selectall(self, event):
+		event.widget.tag_add("sel","1.0","end")
+
 	def __init__(self,root):
-		frame=Frame(root)
-		frame.pack()
-		self.itemfr(frame)
-		self.txtfr(frame)
+		bframe=Frame(root)
+		tframe=Frame(root)
+		tframe.pack(side=TOP)
+		bframe.pack(side=BOTTOM)
+		self.itemfr(tframe)
+		self.txtfr(bframe)
+		root.bind_class("Text","<Control-a>", self.selectall)
 		return
 
-	def mine(self):
-                item_id = self.entry.get()
-                m = miner()
-                m.getItemTrans(item_id)
-		
+	def gettrans(self):
+		item_id = self.ItemEntry.get()
+		m = miner()
+		m.getItemTrans(item_id)
+		return
+
+	def getitems(self):
+		seller_id = self.SellerEntry.get()
+		cat_id = self.CatEntry.get()
+		m = miner()
+		m.getSellerItems(seller_id, cat_id)
+
+	def getcats(self):
+		m = miner()
+		m.getCategories()
+
+
 	def itemfr(self,frame):
-                self.entry = Entry(frame,text="enter ebay item id")
-		self.entry.pack(side=LEFT,padx=10,pady=12)
+		self.ItemEntry = Entry(frame,text="enter ebay item id")
+		self.ItemEntry.pack(side=LEFT)
 
-		self.button = Button(frame, text="MINE", command=self.mine)
-		self.button.pack(side=LEFT,padx=15,pady=10)
+		self.TButton = Button(frame, text="ItemTransactions", command=self.gettrans)
+		self.TButton.pack(side=LEFT)
 
-		self.exit = Button(frame, text="exit", command=frame.quit)
-		self.exit.pack(side=BOTTOM,padx=20,pady=10)
+		self.SellerEntry = Entry(frame,text="seller id")
+		self.SellerEntry.pack(side=LEFT)
+		
+		self.CatEntry = Entry(frame,text="enter category")
+		self.CatEntry.pack(side=LEFT)
+		
+		self.IButton = Button(frame, text="Get Seller Items", command=self.getitems)
+		self.IButton.pack(side=LEFT)
+
+		self.CButton = Button(frame, text="Get Ebay Categories", command=self.getcats)
+		self.CButton.pack(side=LEFT)
+
+
 
 	def txtfr(self,frame):
 		
@@ -51,11 +81,13 @@ class mywidgets:
 		# put a scroll bar in the frame
 		scroll=Scrollbar(textfr)
 		self.text.configure(yscrollcommand=scroll.set)
-		
+		self.exit = Button(frame, text="exit", command=frame.quit)
+		self.exit.pack(side=BOTTOM,padx=20,pady=10)
+
 		#pack everything
 		self.text.pack(side=LEFT)
 		scroll.pack(side=RIGHT,fill=Y)
-		textfr.pack(side=TOP)
+		textfr.pack(side=TOP, fill=X)
 		return
 def main():
 	root = Tk()

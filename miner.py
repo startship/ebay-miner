@@ -10,6 +10,7 @@ import sys
 import json
 from optparse import OptionParser
 from xml.dom.minidom import parseString
+import datetime
 
 sys.path.insert(0, '%s/../' % os.path.dirname(__file__))
 
@@ -73,7 +74,7 @@ class miner:
         sold = api.response_dict().Item.SellingStatus.QuantitySold
 
         if self.opts.debug:
-            debug_results = parseString(removeNonAscii(api.response_content()))
+            debug_results = parseString(self.removeNonAscii(api.response_content()))
             with open(item_id + "_full_results.xml", "w") as f:
                 f.write( debug_results.toprettyxml() )
 
@@ -105,6 +106,71 @@ class miner:
                 print "Date: %(date)s \t Price: %(price)s \t User: %(user)s \t Shipping: %(ship)s" % \
                              {'date': date, 'price' : paid, 'user' : user, 'ship' : shipping}
 
+    def getSellerItems(self, seller_id = None, cat_id = None):
+        print "retrieving items for seller/category id: ",
+        print seller_id + " / ",
+        print cat_id
+        print "Using ebay trading SDK version %s" % ebaysdk.get_version()
+        print "===================="
+        present = datetime.datetime.now()
+        past = present - (datetime.timedelta(days=-30))
+        print present
+        print past
+        # build and execute ebay API call GetItemTransactions
+        api = trading(debug=self.opts.debug, config_file=self.opts.yaml, appid=self.opts.appid,
+                      certid=self.opts.certid, devid=self.opts.devid)
+        token = api.api_config.get('token')
+        api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
+                                      'Pagination':{'EntriesPerPage': 200, 'PageNumber': 2},\
+                                      'CategoryID': cat_id,'UserID': seller_id, \
+                                      'EndTimeFrom': present, 'EndTimeTo': past})
+        if api.error():
+            print api.error()
+            raise Exception(api.error())
+
+        if api.response_content():
+            print "Call Success: %s in length" % len(api.response_content())
+
+        print "Response code: %s" % api.response_code()
+        print "Response DOM: %s" % api.response_dom()
+        if self.opts.debug:
+            debug_results = parseString(self.removeNonAscii(api.response_content()))
+            print debug_results.toprettyxml()
+        # output all seller items
+        if api.response_dict().ItemArray != None:
+            print '----------Item List----------------'
+            for item in api.response_dict().ItemArray.Item:
+                id = item.ItemID
+                cat = item.PrimaryCategory.CategoryID
+                quantity = item.Quantity
+                sold = item.SellingStatus.QuantitySold
+                cprice = item.SellingStatus.ConvertedCurrentPrice.value
+                sprice = item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost.value
+                title = item.Title
+                SKU = item.SKU
+                hits = item.HitCount
+                print "ItemID> %(item)s >Category> %(cat)s >SKU> %(SKU)s  >Title> %(title)s >Quantity> %(quantity)s >Price> %(price)s >ShipCost> %(ship)s >Sold> %(sold)s >PageHits> %(hits)s" % \
+                {'item': id, 'cat' : cat, 'SKU' : SKU, 'title': title, 'quantity' : quantity, 'price': cprice, 'ship': sprice, 'sold': sold, 'hits': hits }
+
+
+    def getCategories(self):
+        # build and execute ebay API call GetItemTransactions
+        api = trading(debug=self.opts.debug, config_file=self.opts.yaml, appid=self.opts.appid,
+                      certid=self.opts.certid, devid=self.opts.devid)
+        token = api.api_config.get('token')
+        api.execute('GetCategories', {'DetailLevel': 'ReturnAll', 'ViewAllNodes': 'true'})
+        if api.error():
+            print api.error()
+            raise Exception(api.error())
+
+        if api.response_content():
+            print "Call Success: %s in length" % len(api.response_content())
+
+        print "Response code: %s" % api.response_code()
+        print "Response DOM: %s" % api.response_dom()
+        debug_results = parseString(self.removeNonAscii(api.response_content()))
+        if self.opts.debug:
+            print debug_results.toprettyxml()
 
 if __name__ == "__main__":
     m = miner()
