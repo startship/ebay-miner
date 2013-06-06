@@ -52,22 +52,27 @@ class mywidgets:
 
 
 	def itemfr(self,frame):
+
+		self.ItemLabel = Label(frame,text="Item ID #")
+		self.ItemLabel.pack(side=LEFT)
 		self.ItemEntry = Entry(frame,text="enter ebay item id")
 		self.ItemEntry.pack(side=LEFT)
-
 		self.TButton = Button(frame, text="ItemTransactions", command=self.gettrans)
 		self.TButton.pack(side=LEFT)
 
+		self.SellerLabel = Label(frame,text="Seller ID")
+		self.SellerLabel.pack(side=LEFT)
 		self.SellerEntry = Entry(frame,text="seller id")
 		self.SellerEntry.pack(side=LEFT)
-		
+
+		self.CatLabel = Label(frame,text="Category #")
+		self.CatLabel.pack(side=LEFT)
 		self.CatEntry = Entry(frame,text="enter category")
 		self.CatEntry.pack(side=LEFT)
-		
 		self.IButton = Button(frame, text="Get Seller Items", command=self.getitems)
 		self.IButton.pack(side=LEFT)
 
-		self.CButton = Button(frame, text="Get Ebay Categories", command=self.getcats)
+		self.CButton = Button(frame, text="Get Ebay Categories #s", command=self.getcats)
 		self.CButton.pack(side=LEFT)
 
 
