@@ -32,7 +32,23 @@ Installation:
 =============
   1. Install python 2.7.5: http://python.org/ftp/python/2.7.5/python-2.7.5.msi
 
-  2. 
+  2. Install setuptools for python 2.7: https://pypi.python.org/packages/2.7/s/setuptools/setuptools-0.6c11.win32-py2.7.exe
+  
+  3. Install pycurl-7.19.0.win32-py2.7.exe: http://www.lfd.uci.edu/~gohlke/pythonlibs/
+      - <i>search for PycURL and download (pycurl-7.19.0.win32-py2.7.exe)</i>
+     
+  4. Install ebay-sdk-python: https://github.com/timotheus/ebaysdk-python  
+      - <i>near the top download ZIP and extract contents on your computer</i>
+      - <i>in the folder you extracted hold down shift + right-click -> 'Open command window here.'</i>
+      - <i>type:</i> <code>c:\Python27\python.exe setup.py install</code>
+  
+  5. Download the ebay-miner: https://github.com/startship/ebay-miner
+      - download ZIP (near the top) extract contents
+  
+  6. click <code>run-ebay-miner.bat</code> to get started.
+
+  <b>THATS IT!!!</b>
+  
 
 
 
