@@ -28,6 +28,13 @@ Requirements:
 
 https://github.com/timotheus/ebaysdk-python
 
+Installation:
+=============
+  1. Install python: 
+
+  2. 
+
+
 
 TODO:
 ==========
