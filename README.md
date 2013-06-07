@@ -30,7 +30,7 @@ https://github.com/timotheus/ebaysdk-python
 
 Installation:
 =============
-  1. Install python: 
+  1. Install python 2.7.5: http://python.org/ftp/python/2.7.5/python-2.7.5.msi
 
   2. 
 
