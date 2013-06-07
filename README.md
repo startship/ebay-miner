@@ -7,14 +7,16 @@ and GetCategories request. Results are then parsed and display into the the text
 Useage:
 -----------
 
-Item Transactions - enter an ebay item# (eg 140729321245)
+<b>Item Transactions</b> - enter an ebay item# (eg 140729321245)
   - returns 30-day transaction history
 
-Get Seller Items - enter seller user id and a category ID# (eg. 80053 (monitors))
-  - returns all seller items ending within 30-days (ebay max) w/ detailed results for each item
-  - note category IDs are ebay defined assets and will change over time
 
-Get Ebay Category#'s - no input, just push the button
+<b>Get Seller Items</b> - enter seller user id and a category ID# (eg. 80053 (monitors))
+  - returns all seller items ending within 30-days (ebay max) w/ detailed results for each item
+  - <i>*note category IDs are ebay defined assets and will change over time</i>
+
+
+<b>Get Ebay Category#'s</b> - no input, just push the button
   - returns an xml list of all ebay categories #'s level 1-4
 
 
