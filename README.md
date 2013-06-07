@@ -43,7 +43,7 @@ Installation:
       - <i>type:</i> <code>c:\Python27\python.exe setup.py install</code>
   
   5. Download the ebay-miner: https://github.com/startship/ebay-miner
-      - download ZIP (near the top) extract contents
+      - <i>download ZIP (near the top) extract contents</i>
   
   6. click <code>run-ebay-miner.bat</code> to get started.
 
