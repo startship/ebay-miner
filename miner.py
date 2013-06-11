@@ -124,7 +124,7 @@ class miner:
         
         page = 1
         api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
-                                        'Pagination':{'EntriesPerPage': 200, 'PageNumber': page},\
+                                        'Pagination':{'EntriesPerPage': 50, 'PageNumber': page},\
                                         'CategoryID': cat_id,'UserID': seller_id, \
                                         'EndTimeFrom': present, 'EndTimeTo': future})
         if api.error():
@@ -161,7 +161,7 @@ class miner:
             page+=1
             if page <= num_pages:
                 api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
-                        'Pagination':{'EntriesPerPage': 200, 'PageNumber': page},\
+                        'Pagination':{'EntriesPerPage': 50, 'PageNumber': page},\
                         'CategoryID': cat_id,'UserID': seller_id, \
                         'EndTimeFrom': present, 'EndTimeTo': future})
             else:break
@@ -183,8 +183,7 @@ class miner:
         print "Response code: %s" % api.response_code()
         print "Response DOM: %s" % api.response_dom()
         debug_results = parseString(self.removeNonAscii(api.response_content()))
-        if self.opts.debug:
-            print debug_results.toprettyxml()
+        print debug_results.toprettyxml()
 
 if __name__ == "__main__":
     m = miner()
