@@ -9,6 +9,7 @@ import sys
 from Tkinter import *
 from miner import *
 
+
 class textbox_handler:
   def __init__(self, text):
     self.data = []
@@ -18,6 +19,8 @@ class textbox_handler:
   def print_out(self):
     for line in data:
         self.text.insert('end',line)
+  def flush(self):
+    self.text.update_idletasks()
 
 class mywidgets:
 
@@ -43,12 +46,19 @@ class mywidgets:
 	def getitems(self):
 		seller_id = self.SellerEntry.get()
 		cat_id = self.CatEntry.get()
+		days = int(self.DaysEntry.get())
 		m = miner()
-		m.getSellerItems(seller_id, cat_id)
+		m.getSellerItems(seller_id, cat_id, days)
 
 	def getcats(self):
 		m = miner()
 		m.getCategories()
+	
+	def getdetail(self):
+		item_id = self.ItemEntry.get()
+		m = miner()
+		m.getItemDetail(item_id)
+		return
 
 
 	def itemfr(self,frame):
@@ -57,6 +67,8 @@ class mywidgets:
 		self.ItemLabel.pack(side=LEFT)
 		self.ItemEntry = Entry(frame,text="enter ebay item id")
 		self.ItemEntry.pack(side=LEFT)
+		self.DButton = Button(frame, text="ItemDetail", command=self.getdetail)
+		self.DButton.pack(side=LEFT)
 		self.TButton = Button(frame, text="ItemTransactions", command=self.gettrans)
 		self.TButton.pack(side=LEFT)
 
@@ -69,6 +81,10 @@ class mywidgets:
 		self.CatLabel.pack(side=LEFT)
 		self.CatEntry = Entry(frame,text="enter category")
 		self.CatEntry.pack(side=LEFT)
+		self.DaysLabel = Label(frame,text="+/-Days")
+		self.DaysLabel.pack(side=LEFT)
+		self.DaysEntry = Entry(frame,text="number of days +/- to search for", width=5)
+		self.DaysEntry.pack(side=LEFT)
 		self.IButton = Button(frame, text="Get Seller Items", command=self.getitems)
 		self.IButton.pack(side=LEFT)
 

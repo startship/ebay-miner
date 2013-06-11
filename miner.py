@@ -43,6 +43,32 @@ class miner:
         (self.opts, self.args) = self.parser.parse_args()
 
 
+    def getItemDetail(self, item_id = None):
+        print "retrieving results for item",
+        print item_id
+        print "Using ebay trading SDK version %s" % ebaysdk.get_version()
+        print "===================="
+        # build and execute ebay API call GetItemTransactions
+        api = trading(debug=self.opts.debug, config_file=self.opts.yaml, appid=self.opts.appid,
+                      certid=self.opts.certid, devid=self.opts.devid)
+        token = api.api_config.get('token')
+        
+        api.execute('GetItem', {'ItemID': item_id, 'DetailLevel': 'ReturnAll'})
+        
+        if api.error():
+            print api.error()
+            raise Exception(api.error())
+
+        if api.response_content():
+            print "Call Success: %s in length" % len(api.response_content())
+
+        print "Response code: %s" % api.response_code()
+        print "Response DOM: %s" % api.response_dom()
+        debug_results = parseString(self.removeNonAscii(api.response_content()))
+        print debug_results.toprettyxml()
+    
+
+
     def getItemTrans(self, item_id = None):
         print "retrieving results for item",
         print item_id
@@ -106,16 +132,25 @@ class miner:
                 print "Date: %(date)s \t Price: %(price)s \t User: %(user)s \t Shipping: %(ship)s" % \
                              {'date': date, 'price' : paid, 'user' : user, 'ship' : shipping}
 
-    def getSellerItems(self, seller_id = None, cat_id = None):
+    def getSellerItems(self, seller_id = None, cat_id = None, days = None):
         print "retrieving items for seller/category id: ",
         print seller_id + " / ",
         print cat_id
         print "Using ebay trading SDK version %s" % ebaysdk.get_version()
         print "===================="
-        present = datetime.datetime.now()
-        future = present + (datetime.timedelta(days=30))
-        print present
-        print future
+        if days > 0:
+            earliest = datetime.datetime.now()
+            latest = earliest + (datetime.timedelta(days))
+            earliest_s = 'EndTimeFrom'
+            latest_s = 'EndTimeTo'
+            
+        else:
+            latest = datetime.datetime.now()
+            earliest = latest + (datetime.timedelta(days))
+            earliest_s = 'StartTimeFrom'
+            latest_s = 'StartTimeTo'
+        print earliest
+        print latest
 
         # build and execute ebay API call GetItemTransactions
         api = trading(debug=self.opts.debug, config_file=self.opts.yaml, appid=self.opts.appid,
@@ -126,7 +161,7 @@ class miner:
         api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
                                         'Pagination':{'EntriesPerPage': 50, 'PageNumber': page},\
                                         'CategoryID': cat_id,'UserID': seller_id, \
-                                        'EndTimeFrom': present, 'EndTimeTo': future})
+                                        earliest_s: earliest, latest_s: latest})
         if api.error():
             print api.error()
             raise Exception(api.error())
@@ -159,11 +194,12 @@ class miner:
                     {'item': id, 'cat' : cat, 'SKU' : SKU, 'title': title, 'quantity' : quantity, 'price': cprice, 'ship': sprice, 'sold': sold, 'list_date': list_date, 'hits': hits }
             #determine if we need another pass
             page+=1
+            sys.stdout.flush()
             if page <= num_pages:
                 api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
                         'Pagination':{'EntriesPerPage': 50, 'PageNumber': page},\
                         'CategoryID': cat_id,'UserID': seller_id, \
-                        'EndTimeFrom': present, 'EndTimeTo': future})
+                        earliest_s: earliest, latest_s: latest})
             else:break
 
 
