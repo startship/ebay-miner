@@ -8,6 +8,7 @@ Licensed under CDDL 1.0
 import sys
 from Tkinter import *
 from miner import *
+from optparse import OptionParser
 
 
 class textbox_handler:
@@ -35,7 +36,28 @@ class mywidgets:
 		self.itemfr(tframe)
 		self.txtfr(bframe)
 		root.bind_class("Text","<Control-a>", self.selectall)
+		#options parse
+		usage = "usage: %prog [options]"
+		self.parser = OptionParser(usage=usage)
+
+		self.parser.add_option("-d", "--debug",
+				action="store_true", dest="debug", default=False,
+				help="Enabled debugging [default: %default]")
+		self.parser.add_option("-y", "--yaml",
+				dest="yaml", default='ebay.yaml',
+				help="Specifies the name of the YAML defaults file. [default: %default]")
+		self.parser.add_option("-a", "--appid",
+				dest="appid", default=None,
+				help="Specifies the eBay application id to use.")
+		self.parser.add_option("-p", "--devid",
+				dest="devid", default=None,
+				help="Specifies the eBay developer id to use.")
+		self.parser.add_option("-c", "--certid",
+				dest="certid", default=None,
+				help="Specifies the eBay cert id to use.")
+		(self.opts, self.args) = self.parser.parse_args()
 		return
+
 
 	def gettrans(self):
 		item_id = self.ItemEntry.get()

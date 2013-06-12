@@ -11,14 +11,17 @@ import json
 from optparse import OptionParser
 from xml.dom.minidom import parseString
 import datetime
+import time
 
 sys.path.insert(0, '%s/../' % os.path.dirname(__file__))
 
 import ebaysdk
 from ebaysdk import trading
+from ebaysdk import parallel
 
 class miner:
     def removeNonAscii(self, s): return "".join(i for i in s if ord(i)<128)
+    def wait(self): time.sleep(3.0)
 
     def __init__(self):
         usage = "usage: %prog [options]"
@@ -152,7 +155,7 @@ class miner:
         print earliest
         print latest
 
-        # build and execute ebay API call GetItemTransactions
+        # build and execute ebay API call GetItemTransaction
         api = trading(debug=self.opts.debug, config_file=self.opts.yaml, appid=self.opts.appid,
                       certid=self.opts.certid, devid=self.opts.devid)
         token = api.api_config.get('token')
@@ -171,18 +174,20 @@ class miner:
             print "Response code: %s" % api.response_code()
             print "Response DOM: %s" % api.response_dom()
             
-        num_pages = api.response_dict().PaginationResult.TotalNumberOfPages
+        num_pages = int(api.response_dict().PaginationResult.TotalNumberOfPages)
 
         while 1:
             if self.opts.debug:
                 debug_results = parseString(self.removeNonAscii(api.response_content()))
                 print debug_results.toprettyxml()
-            # output all seller items
-            if api.response_dict().ItemArray != None:
+            if api.error():
+                print api.error()
+                raise Exception(api.error())
+            elif api.response_dict().ItemArray != None:
                 for item in api.response_dict().ItemArray.Item:
                     id = item.ItemID
-                    list_date, time = item.ListingDetails.StartTime.split('T')
                     cat = item.PrimaryCategory.CategoryID
+                    list_date, time = item.ListingDetails.StartTime.split('T')
                     quantity = item.Quantity
                     sold = item.SellingStatus.QuantitySold
                     cprice = item.SellingStatus.ConvertedCurrentPrice.value
@@ -199,7 +204,11 @@ class miner:
                 api.execute('GetSellerList', {'DetailLevel': 'ItemReturnDescription', \
                         'Pagination':{'EntriesPerPage': 50, 'PageNumber': page},\
                         'CategoryID': cat_id,'UserID': seller_id, \
-                        earliest_s: earliest, latest_s: latest})
+                        earliest_s: earliest, latest_s: latest, \
+                        'OutputSelector': 'ItemArray.Item.ItemID,ItemArray.Item.PrimaryCategory.CategoryID,\
+ItemArray.Item.ListingDetails.StartTime,ItemArray.Item.Quantity,ItemArray.Item.SellingStatus.QuantitySold,\
+ItemArray.Item.SellingStatus.ConvertedCurrentPrice,ItemArray.Item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost,\
+ItemArray.Item.Title,ItemArray.Item.SKU,ItemArray.Item.HitCount'})
             else:break
 
 
