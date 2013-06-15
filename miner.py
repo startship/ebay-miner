@@ -84,7 +84,7 @@ class miner:
                       certid=self.opts.certid, devid=self.opts.devid)
         token = api.api_config.get('token')
         
-        api.execute('GetItemTransactions', {'ItemID': item_id})
+        api.execute('GetItemTransactions', {'ItemID': item_id, 'NumberOfDays': 30})
 
      
 
@@ -120,10 +120,9 @@ class miner:
                     date = trans.CreatedDate
                     user = trans.Buyer.UserID
                     paid = trans.ConvertedTransactionPrice.value 
-                    shipping = trans.ShippingDetails.ShippingServiceOptions.ShippingService
                     
-                    print "Date: %(date)s \t Price: %(price)s \t User: %(user)s \t Shipping: %(ship)s" % \
-                                 {'date': date, 'price' : paid, 'user' : user, 'ship' : shipping}
+                    print "Date: %(date)s \t Price: %(price)s \t User: %(user)s " % \
+                                 {'date': date, 'price' : paid, 'user' : user}
             else:
                 # if only one transaction, we have to deal with a list instead of dict
                 trans = api.response_dict().TransactionArray.Transaction
