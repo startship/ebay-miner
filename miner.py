@@ -190,7 +190,12 @@ class miner:
                     quantity = item.Quantity
                     sold = item.SellingStatus.QuantitySold
                     cprice = item.SellingStatus.ConvertedCurrentPrice.value
-                    sprice = item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost.value
+                    try:
+                        item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost.value
+                    except:
+                        sprice = 'NA'
+                    else:
+                        sprice = item.ShippingDetails.ShippingServiceOptions.ShippingServiceCost.value
                     title = item.Title
                     SKU = item.SKU
                     hits = item.HitCount
